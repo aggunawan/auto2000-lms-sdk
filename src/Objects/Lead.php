@@ -3,6 +3,7 @@
 namespace Aggunawan\Auto2000LMS\Objects;
 
 use Aggunawan\Auto2000LMS\Enums\TitleEnum;
+use Aggunawan\Auto2000LMS\Exceptions\InvalidLead;
 use Aggunawan\Auto2000LMS\Interfaces\LeadRequestInterface;
 use Carbon\Carbon;
 
@@ -19,14 +20,14 @@ class Lead implements LeadRequestInterface
     private string $leadBusinessAreaCode;
     private string $leadSourceCategoryCode;
     private int $leadStatus;
-    private ?string $leadNote;
-    private ?string $leadProgram;
-    private ?string $leadAreaCode;
-    private ?string $leadCityCode;
-    private ?string $leadSalesmanNumber;
+    private ?string $leadNote = null;
+    private ?string $leadProgram = null;
+    private ?string $leadAreaCode = null;
+    private ?string $leadCityCode = null;
+    private ?string $leadSalesmanNumber = null;
     private string $sourceCode;
-    private ?string $sourceSystem;
-    private ?string $sourceSystemNumber;
+    private ?string $sourceSystem = null;
+    private ?string $sourceSystemNumber = null;
     private string $companyCode;
     private string $userGroup;
 
@@ -35,13 +36,21 @@ class Lead implements LeadRequestInterface
         return $this->customerTitle;
     }
 
+    /**
+     * @throws InvalidLead
+     */
     public function customerName(): string
     {
+        $this->checkInvalidException('customerName');
         return $this->customerName;
     }
 
+    /**
+     * @throws InvalidLead
+     */
     public function customerPhone(): string
     {
+        $this->checkInvalidException('customerPhone');
         return $this->customerPhone;
     }
 
@@ -55,33 +64,57 @@ class Lead implements LeadRequestInterface
         return $this->customerAddress;
     }
 
+    /**
+     * @throws InvalidLead
+     */
     public function leadCreationTime(): Carbon
     {
+        $this->checkInvalidException('leadCreationTime');
         return $this->leadCreationTime;
     }
 
+    /**
+     * @throws InvalidLead
+     */
     public function leadPreferredDate(): Carbon
     {
+        $this->checkInvalidException('leadPreferredDate');
         return $this->leadPreferredDate;
     }
 
+    /**
+     * @throws InvalidLead
+     */
     public function leadProspectVariant(): string
     {
+        $this->checkInvalidException('leadProspectVariant');
         return $this->leadProspectVariant;
     }
 
+    /**
+     * @throws InvalidLead
+     */
     public function leadBusinessAreaCode(): string
     {
+        $this->checkInvalidException('leadBusinessAreaCode');
         return $this->leadBusinessAreaCode;
     }
 
+    /**
+     * @throws InvalidLead
+     */
     public function leadSourceCategoryCode(): string
     {
+        $this->checkInvalidException('leadSourceCategoryCode');
         return $this->leadSourceCategoryCode;
     }
 
+    /**
+     * @throws InvalidLead
+     */
     public function leadStatus(): int
     {
+        $this->checkInvalidException('leadStatus');
         return $this->leadStatus;
     }
 
@@ -110,8 +143,12 @@ class Lead implements LeadRequestInterface
         return $this->leadSalesmanNumber;
     }
 
+    /**
+     * @throws InvalidLead
+     */
     public function sourceCode(): string
     {
+        $this->checkInvalidException('sourceCode');
         return $this->sourceCode;
     }
 
@@ -125,13 +162,21 @@ class Lead implements LeadRequestInterface
         return $this->sourceSystemNumber;
     }
 
+    /**
+     * @throws InvalidLead
+     */
     public function companyCode(): string
     {
+        $this->checkInvalidException('companyCode');
         return $this->companyCode;
     }
 
+    /**
+     * @throws InvalidLead
+     */
     public function userGroup(): string
     {
+        $this->checkInvalidException('userGroup');
         return $this->userGroup;
     }
 
@@ -253,5 +298,19 @@ class Lead implements LeadRequestInterface
     {
         $this->userGroup = $userGroup;
         return $this;
+    }
+
+    public function setCustomerTitle(TitleEnum $enum): Lead
+    {
+        $this->customerTitle = $enum;
+        return $this;
+    }
+
+    /**
+     * @throws InvalidLead
+     */
+    protected function checkInvalidException(string $key): void
+    {
+        if (!isset($this->{$key})) throw new InvalidLead();
     }
 }

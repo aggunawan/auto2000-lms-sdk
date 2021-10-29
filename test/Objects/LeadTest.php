@@ -3,6 +3,7 @@
 namespace Test\Objects;
 
 use Aggunawan\Auto2000LMS\Enums\TitleEnum;
+use Aggunawan\Auto2000LMS\Exceptions\InvalidLead;
 use Aggunawan\Auto2000LMS\Objects\Lead;
 use Carbon\Carbon;
 use PHPUnit\Framework\TestCase;
@@ -27,6 +28,7 @@ class LeadTest extends TestCase
 
     /**
      * @throws ReflectionException
+     * @throws InvalidLead
      */
     public function testCustomerName()
     {
@@ -41,6 +43,7 @@ class LeadTest extends TestCase
 
     /**
      * @throws ReflectionException
+     * @throws InvalidLead
      */
     public function testCustomerPhone()
     {
@@ -83,6 +86,7 @@ class LeadTest extends TestCase
 
     /**
      * @throws ReflectionException
+     * @throws InvalidLead
      */
     public function testLeadCreationTime()
     {
@@ -98,6 +102,7 @@ class LeadTest extends TestCase
 
     /**
      * @throws ReflectionException
+     * @throws InvalidLead
      */
     public function testLeadPreferredDate()
     {
@@ -113,6 +118,7 @@ class LeadTest extends TestCase
 
     /**
      * @throws ReflectionException
+     * @throws InvalidLead
      */
     public function testLeadProspectVariant()
     {
@@ -127,6 +133,7 @@ class LeadTest extends TestCase
 
     /**
      * @throws ReflectionException
+     * @throws InvalidLead
      */
     public function testLeadBusinessAreaCode()
     {
@@ -141,6 +148,7 @@ class LeadTest extends TestCase
 
     /**
      * @throws ReflectionException
+     * @throws InvalidLead
      */
     public function testLeadSourceCategoryCode()
     {
@@ -155,6 +163,7 @@ class LeadTest extends TestCase
 
     /**
      * @throws ReflectionException
+     * @throws InvalidLead
      */
     public function testLeadStatus()
     {
@@ -239,6 +248,7 @@ class LeadTest extends TestCase
 
     /**
      * @throws ReflectionException
+     * @throws InvalidLead
      */
     public function testSourceCode()
     {
@@ -281,6 +291,7 @@ class LeadTest extends TestCase
 
     /**
      * @throws ReflectionException
+     * @throws InvalidLead
      */
     public function testCompanyCode()
     {
@@ -295,6 +306,7 @@ class LeadTest extends TestCase
 
     /**
      * @throws ReflectionException
+     * @throws InvalidLead
      */
     public function testUserGroup()
     {
@@ -305,6 +317,17 @@ class LeadTest extends TestCase
         $prop->setValue($lead, 'ug');
 
         $this->assertSame('ug', $lead->userGroup());
+    }
+
+    public function testSetCustomerTitle()
+    {
+        $lead = new Lead();
+        $lead->setCustomerTitle(TitleEnum::company());
+
+        $prop = new ReflectionProperty(Lead::class, 'customerTitle');
+        $prop->setAccessible(true);
+
+        $this->assertSame(TitleEnum::company()->value, $prop->getValue($lead)->value);
     }
 
     public function testSetCustomerName()
@@ -527,5 +550,82 @@ class LeadTest extends TestCase
         $prop->setAccessible(true);
 
         $this->assertSame('ug', $prop->getValue($lead));
+    }
+
+    public function testExceptionOnNullCustomerName()
+    {
+        $this->expectException(InvalidLead::class);
+        $lead = new Lead();
+        $lead->customerName();
+    }
+
+    public function testExceptionOnNullCustomerPhone()
+    {
+        $this->expectException(InvalidLead::class);
+        $lead = new Lead();
+        $lead->customerPhone();
+    }
+
+    public function testExceptionOnNullCreationTime()
+    {
+        $this->expectException(InvalidLead::class);
+        $lead = new Lead();
+        $lead->leadCreationTime();
+    }
+
+    public function testExceptionOnNullPreferredDate()
+    {
+        $this->expectException(InvalidLead::class);
+        $lead = new Lead();
+        $lead->leadPreferredDate();
+    }
+
+    public function testExceptionOnNullProspectVariant()
+    {
+        $this->expectException(InvalidLead::class);
+        $lead = new Lead();
+        $lead->leadProspectVariant();
+    }
+
+    public function testExceptionOnNullLeadBusinessAreaCode()
+    {
+        $this->expectException(InvalidLead::class);
+        $lead = new Lead();
+        $lead->leadBusinessAreaCode();
+    }
+
+    public function testExceptionOnNullLeadSourceCategoryCode()
+    {
+        $this->expectException(InvalidLead::class);
+        $lead = new Lead();
+        $lead->leadSourceCategoryCode();
+    }
+
+    public function testExceptionOnNullLeadStatus()
+    {
+        $this->expectException(InvalidLead::class);
+        $lead = new Lead();
+        $lead->leadStatus();
+    }
+
+    public function testExceptionOnNullSourceCode()
+    {
+        $this->expectException(InvalidLead::class);
+        $lead = new Lead();
+        $lead->sourceCode();
+    }
+
+    public function testExceptionOnNullCompanyCode()
+    {
+        $this->expectException(InvalidLead::class);
+        $lead = new Lead();
+        $lead->companyCode();
+    }
+
+    public function testExceptionOnNullUserGroup()
+    {
+        $this->expectException(InvalidLead::class);
+        $lead = new Lead();
+        $lead->companyCode();
     }
 }
