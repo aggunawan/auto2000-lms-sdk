@@ -4,6 +4,7 @@ namespace Aggunawan\Auto2000LMS\Objects;
 
 use Aggunawan\Auto2000LMS\Enums\TitleEnum;
 use Aggunawan\Auto2000LMS\Exceptions\InvalidLead;
+use Aggunawan\Auto2000LMS\Interfaces\CompanyConfigInterface;
 use Aggunawan\Auto2000LMS\Interfaces\LeadRequestInterface;
 use Carbon\Carbon;
 
@@ -30,6 +31,12 @@ class Lead implements LeadRequestInterface
     private ?string $sourceSystemNumber = null;
     private string $companyCode;
     private string $userGroup;
+    private ?CompanyConfigInterface $config;
+
+    public function __construct(CompanyConfigInterface $config = null)
+    {
+        $this->config = $config;
+    }
 
     public function customerTitle(): ?TitleEnum
     {
@@ -154,7 +161,8 @@ class Lead implements LeadRequestInterface
 
     public function sourceSystem(): ?string
     {
-        return $this->sourceSystem;
+        return is_null($this->sourceSystem) && !is_null($this->config) ?
+            $this->config->defaultSourceSystem() : $this->sourceSystem;
     }
 
     public function sourceSystemNumber(): ?string
@@ -311,6 +319,18 @@ class Lead implements LeadRequestInterface
      */
     protected function checkInvalidException(string $key): void
     {
-        if (!isset($this->{$key})) throw new InvalidLead();
+        $map = [
+            'companyCode' => 'defaultCompanyCode',
+            'userGroup' => 'defaultUserGroup',
+            'sourceCode' => 'defaultSourceCode',
+            'leadSourceCategoryCode' => 'defaultSourceCategoryCode',
+            'sourceSystem' => 'defaultSourceSystem',
+        ];
+
+        if ($this->config && is_null($this->{$key} ?? null)) {
+            $this->{$key} = $this->config->{$map[$key]}();
+        } else {
+            if (!isset($this->{$key})) throw new InvalidLead();
+        }
     }
 }

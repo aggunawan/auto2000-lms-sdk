@@ -4,6 +4,8 @@ namespace Test\Objects;
 
 use Aggunawan\Auto2000LMS\Enums\TitleEnum;
 use Aggunawan\Auto2000LMS\Exceptions\InvalidLead;
+use Aggunawan\Auto2000LMS\Interfaces\CompanyConfigInterface;
+use Aggunawan\Auto2000LMS\Objects\CompanyConfig;
 use Aggunawan\Auto2000LMS\Objects\Lead;
 use Carbon\Carbon;
 use PHPUnit\Framework\TestCase;
@@ -627,5 +629,38 @@ class LeadTest extends TestCase
         $this->expectException(InvalidLead::class);
         $lead = new Lead();
         $lead->companyCode();
+    }
+
+    public function testCreateLeadsWithCompanyConfig()
+    {
+        $leadWithConfig = new Lead(new CompanyConfig());
+        $leadWithoutConfig = new Lead();
+
+        $config = new ReflectionProperty(Lead::class, 'config');
+        $config->setAccessible(true);
+
+        $this->assertInstanceOf(CompanyConfigInterface::class, $config->getValue($leadWithConfig));
+        $this->assertNull($config->getValue($leadWithoutConfig));
+    }
+
+    /**
+     * @throws InvalidLead
+     */
+    public function testGetSourceSystemWithConfig()
+    {
+        $conf = new CompanyConfig();
+        $conf->setCompanyCode('cc')
+            ->setUserGroup('ug')
+            ->setSourceCode('sc')
+            ->setSourceCategoryCode('scc')
+            ->setSourceSystem('ss');
+
+        $lead = new Lead($conf);
+
+        $this->assertSame('cc', $lead->companyCode());
+        $this->assertSame('ug', $lead->userGroup());
+        $this->assertSame('sc', $lead->sourceCode());
+        $this->assertSame('scc', $lead->leadSourceCategoryCode());
+        $this->assertSame('ss', $lead->sourceSystem());
     }
 }
