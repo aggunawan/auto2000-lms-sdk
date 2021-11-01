@@ -1,23 +1,26 @@
 <?php
 
+use Aggunawan\Auto2000LMS\Objects\App;
+use Aggunawan\Auto2000LMS\Objects\Config;
+use Aggunawan\Auto2000LMS\Objects\HttpClient;
 use Aggunawan\Auto2000LMS\Objects\Lead;
 use Aggunawan\Auto2000LMS\Operations\GeneralLead;
 use Carbon\Carbon;
-use Symfony\Component\HttpClient\HttpClient;
 
 require_once('../vendor/autoload.php');
 
 $baseUri = '';
-$accessToken = '';
+$clientId = '';
+$clientSecret = '';
 
-$httpClient = HttpClient::createForBaseUri(
-    $baseUri,
-    [
-        'auth_bearer' => $accessToken
-    ]
+$httpClient = new HttpClient(
+    (new Config())->setBaseUrl($baseUri),
+    (new App())
+        ->setClientId($clientId)
+        ->setClientSecret($clientSecret)
 );
 
-$ops = new GeneralLead($httpClient);
+$ops = new GeneralLead($httpClient->getBearerClient());
 $lead = $ops->createLead(
     (new Lead())
         ->setCustomerName('')

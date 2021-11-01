@@ -21,9 +21,9 @@ class Authentication
 
     public function getToken(): ?Token
     {
-        $token = new Token();
-
         try {
+            $token = new Token();
+
             $res = $this->httpClient->request(
                 'POST',
                 '/api_gateway/astra-api-developer/astra-auth/oauth2/token',
@@ -37,10 +37,11 @@ class Authentication
 
             $arr = $res->toArray(false);
 
-            $token->setExpiresIn($arr['expires_in']);
-            $token->setAccessToken($arr['access_token']);
-
-            return $token;
+            if (isset($arr['expires_in']) && isset($arr['access_token'])) {
+                $token->setExpiresIn($arr['expires_in']);
+                $token->setAccessToken($arr['access_token']);
+                return $token;
+            }
         } catch (
             TransportExceptionInterface |
             ClientExceptionInterface |
